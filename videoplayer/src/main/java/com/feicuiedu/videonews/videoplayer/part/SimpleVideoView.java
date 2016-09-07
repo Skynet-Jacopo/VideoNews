@@ -2,6 +2,8 @@ package com.feicuiedu.videonews.videoplayer.part;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,6 +54,7 @@ public class SimpleVideoView extends FrameLayout {
     private ProgressBar progressBar;
 
     private boolean isPrepared; // 是否已准备好
+    private boolean isPlaying; // 是否正在播放
 
     public SimpleVideoView(Context context) {
         this(context, null);
@@ -65,6 +68,18 @@ public class SimpleVideoView extends FrameLayout {
         super(context, attrs, defStyleAttr);
         init();
     }
+
+    private Handler handler = new Handler() {
+        @Override public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (isPlaying) {
+                // 每200毫秒更新一次播放进度
+                int progress = (int) (mediaPlayer.getCurrentPosition() * PROGRESS_MAX / mediaPlayer.getDuration());
+                progressBar.setProgress(progress);
+                handler.sendEmptyMessageDelayed(0, 200);
+            }
+        }
+    };
 
     private void init() {
         // Vitamio的初始化
@@ -103,8 +118,6 @@ public class SimpleVideoView extends FrameLayout {
         // 设置进度条
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setMax(PROGRESS_MAX);
-        // TODO: 2016/9/7 0007 将每200MS去获取一次当前进度，对Progress进行UI更新
-        progressBar.setProgress(500);
         // 全屏播放按钮
         ImageButton btnFullScreen = (ImageButton) findViewById(R.id.btnFullScreen);
         btnFullScreen.setOnClickListener(new OnClickListener() {
@@ -146,8 +159,10 @@ public class SimpleVideoView extends FrameLayout {
     // 开始播放，同时更新UI状态
     private void startMediaPlayer() {
         ivPreview.setVisibility(View.INVISIBLE);
-        mediaPlayer.start();
         btnToggle.setImageResource(R.drawable.ic_pause);
+        mediaPlayer.start();
+        isPlaying = true;
+        handler.sendEmptyMessage(0);
     }
 
     private void prepareMediaPlayer() {
@@ -156,6 +171,8 @@ public class SimpleVideoView extends FrameLayout {
             mediaPlayer.setDataSource(videoPath);
             mediaPlayer.setLooping(true);
             mediaPlayer.prepareAsync();
+            //
+            ivPreview.setVisibility(View.VISIBLE);
         } catch (IOException e) {
             // TODO: 2016/9/7 0007 提示develop发生错误!
             Log.d("SimpleVideoView", " prepare MediaPlayer " + e.getMessage());
@@ -172,7 +189,9 @@ public class SimpleVideoView extends FrameLayout {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
+        isPlaying = false;
         btnToggle.setImageResource(R.drawable.ic_play_arrow);
+        handler.removeMessages(0);
     }
 
     // 释放MediaPlayer，同时更新UI状态
@@ -180,6 +199,7 @@ public class SimpleVideoView extends FrameLayout {
         mediaPlayer.release();
         mediaPlayer = null;
         isPrepared = false;
+        progressBar.setProgress(0);
     }
 
     public void setVideoPath(String videoPath) {
