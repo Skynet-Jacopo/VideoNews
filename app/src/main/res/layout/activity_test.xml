@@ -9,5 +9,5 @@
     <com.feicuiedu.videonews.videoplayer.part.SimpleVideoView
         android:id="@+id/simpleVideoPlayer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="@dimen/size_300"/>
 </RelativeLayout>

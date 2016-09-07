@@ -1,6 +1,7 @@
 package com.feicuiedu.videonews.videoplayer.part;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.feicuiedu.videonews.videoplayer.R;
+import com.feicuiedu.videonews.videoplayer.full.VideoViewActivity;
 
 import java.io.IOException;
 
@@ -46,15 +49,16 @@ public class SimpleVideoView extends FrameLayout {
 
     private String videoPath; // 视频播放URL
     private MediaPlayer mediaPlayer;
+    private boolean isPrepared; // 是否已准备好
+    private boolean isPlaying; // 是否正在播放
 
+    // 视图相关start-------------------
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
     private ImageView ivPreview;
     private ImageButton btnToggle;
     private ProgressBar progressBar;
-
-    private boolean isPrepared; // 是否已准备好
-    private boolean isPlaying; // 是否正在播放
+    // 视图相关end-------------------
 
     public SimpleVideoView(Context context) {
         this(context, null);
@@ -92,6 +96,20 @@ public class SimpleVideoView extends FrameLayout {
         initControllerViews();
     }
 
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
+    }
+
+    public void onResume() {
+        initMediaPlayer(); // 初始化MediaPlayer，设置一系列监听器
+        prepareMediaPlayer(); // 准备MediaPlayer，同时更新UI状态
+    }
+
+    public void onPause() {
+        pauseMediaPlayer(); // 暂停播放，同时更新UI状态
+        releaseMediaPlayer(); // 释放MediaPlayer，同时更新UI状态
+    }
+
     private void initSurfaceView() {
         surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
         surfaceHolder = surfaceView.getHolder();
@@ -122,14 +140,10 @@ public class SimpleVideoView extends FrameLayout {
         ImageButton btnFullScreen = (ImageButton) findViewById(R.id.btnFullScreen);
         btnFullScreen.setOnClickListener(new OnClickListener() {
             @Override public void onClick(View v) {
-                // TODO: 2016/9/7 0007 startActivity
+                Intent intent = new Intent(getContext(), VideoViewActivity.class);
+                getContext().startActivity(intent);
             }
         });
-    }
-
-    public void onResume() {
-        initMediaPlayer(); // 初始化MediaPlayer，设置一系列监听器
-        prepareMediaPlayer(); // 准备MediaPlayer，同时更新UI状态
     }
 
     // 初始化MediaPlayer，设置一系列监听器
@@ -153,7 +167,17 @@ public class SimpleVideoView extends FrameLayout {
                 return false;
             }
         });
-        // TODO: 2016/9/7 0007 OnVideoSizeChangedListener来处理surfaceview的size
+        mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+            @Override public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                int layoutWidth = surfaceView.getWidth();
+                int layoutHeigth = layoutWidth * height / width;
+                // 更新surfaceView的size
+                ViewGroup.LayoutParams layoutParams = surfaceView.getLayoutParams();
+                layoutParams.width = layoutWidth;
+                layoutParams.height = layoutHeigth;
+                surfaceView.setLayoutParams(layoutParams);
+            }
+        });
     }
 
     // 开始播放，同时更新UI状态
@@ -179,11 +203,6 @@ public class SimpleVideoView extends FrameLayout {
         }
     }
 
-    public void onPause() {
-        pauseMediaPlayer(); // 暂停播放，同时更新UI状态
-        releaseMediaPlayer(); // 释放MediaPlayer，同时更新UI状态
-    }
-
     // 暂停播放，同时更新UI状态
     private void pauseMediaPlayer() {
         if (mediaPlayer.isPlaying()) {
@@ -200,9 +219,5 @@ public class SimpleVideoView extends FrameLayout {
         mediaPlayer = null;
         isPrepared = false;
         progressBar.setProgress(0);
-    }
-
-    public void setVideoPath(String videoPath) {
-        this.videoPath = videoPath;
     }
 }
