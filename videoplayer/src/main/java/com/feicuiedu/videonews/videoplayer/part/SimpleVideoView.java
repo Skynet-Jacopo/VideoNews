@@ -2,7 +2,16 @@ package com.feicuiedu.videonews.videoplayer.part;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+
+import com.feicuiedu.videonews.videoplayer.R;
+
+import java.io.IOException;
+
+import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.Vitamio;
 
 /**
  * 一个自定义的VideoView,使用MediaPlayer+SurfaceView来实现视频的播放
@@ -24,6 +33,7 @@ import android.widget.FrameLayout;
 public class SimpleVideoView extends FrameLayout {
 
     private String videoPath; // 视频播放URL
+    private MediaPlayer mediaPlayer;
 
     public SimpleVideoView(Context context) {
         this(context, null);
@@ -39,7 +49,9 @@ public class SimpleVideoView extends FrameLayout {
     }
 
     private void init() {
-        // TODO: 2016/9/7 0007  设计、加载当前自定义视图xml
+        // Vitamio的初始化
+        Vitamio.isInitialized(getContext());
+        LayoutInflater.from(getContext()).inflate(R.layout.view_simple_video_player, this, true);
         // 初始化SurfaceView
         initSurfaceView();
         // 初始化视频播放控制视图
@@ -59,25 +71,59 @@ public class SimpleVideoView extends FrameLayout {
         prepareMediaPlayer(); // 准备MediaPlayer，同时更新UI状态
     }
 
+    // 初始化MediaPlayer，设置一系列监听器
     private void initMediaPlayer() {
+        mediaPlayer = new MediaPlayer(getContext());
+        // mediaPlayer.setDisplay();
+        // 监听处理
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override public void onPrepared(MediaPlayer mp) {
+                startMediaPlayer();
+            }
+        });
+        mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            @Override public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                // vitamio5.0，要进行audio处理,才能对在线视频进行播放
+                if (what == MediaPlayer.MEDIA_INFO_FILE_OPEN_OK) {
+                    mediaPlayer.audioInitedOk(mediaPlayer.audioTrackInit());
+                    return true;
+                }
+                return false;
+            }
+        });
+        // TODO: 2016/9/7 0007 OnVideoSizeChangedListener来处理surfaceview的size
+    }
 
+    private void startMediaPlayer() {
+        mediaPlayer.start();
     }
 
     private void prepareMediaPlayer() {
-
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(videoPath);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            // TODO: 2016/9/7 0007 提示develop发生错误!
+            Log.d("SimpleVideoView", " prepare MediaPlayer " + e.getMessage());
+        }
     }
 
     public void onPause() {
         pauseMediaPlayer(); // 暂停播放，同时更新UI状态
         releaseMediaPlayer(); // 释放MediaPlayer，同时更新UI状态
     }
-
+    // 暂停播放，同时更新UI状态
     private void pauseMediaPlayer() {
-
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+        }
     }
-
+    // 释放MediaPlayer，同时更新UI状态
     private void releaseMediaPlayer() {
-
+        mediaPlayer.release();
+        mediaPlayer = null;
     }
 
     public void setVideoPath(String videoPath) {
