@@ -8,6 +8,7 @@ android {
     defaultConfig {
         applicationId "com.feicuiedu.videonews"
         minSdkVersion 19
+        //noinspection OldTargetApi,OldTargetApi,OldTargetApi
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"

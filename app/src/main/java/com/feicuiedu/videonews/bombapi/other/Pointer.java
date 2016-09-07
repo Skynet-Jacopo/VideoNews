@@ -24,4 +24,16 @@ public class Pointer {
         this.className = className;
         this.objectId = objectId;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
 }

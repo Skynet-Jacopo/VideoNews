@@ -9,7 +9,7 @@
         android:layout_width="@dimen/size_300"
         android:layout_height="@dimen/size_300"
         android:hint="@string/please_edit_comment"
-        android:gravity="top|left"
+        android:gravity="top|start"
         android:padding="@dimen/lay_8"/>
 
     <FrameLayout

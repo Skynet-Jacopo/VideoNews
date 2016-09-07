@@ -16,6 +16,9 @@ public class LikesOperation {
         likes = new RelationOperation(operation,pointer);
     }
 
+    public RelationOperation getLikes() {
+        return likes;
+    }
 //    "likes": {
 //        "__op": "RemoveRelation",   // 代表此操作是删除一个Relation
 //                "objects": [

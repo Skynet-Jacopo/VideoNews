@@ -26,7 +26,15 @@ public class RelationOperation {
         this.objects = Arrays.asList(pointers);
     }
 
-//    "__op": "AddRelation",   // 代表此操作是添加一个Relation
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public List<Pointer> getObjects() {
+        return objects;
+    }
+
+    //    "__op": "AddRelation",   // 代表此操作是添加一个Relation
 //    "objects": [
 //    {
 //        "__type": "Pointer",
