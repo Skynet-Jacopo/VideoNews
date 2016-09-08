@@ -72,7 +72,8 @@ public class VideoViewActivity extends AppCompatActivity {
     private void initVideoView() {
         Vitamio.isInitialized(this);
         videoView = (VideoView) findViewById(R.id.videoView);
-        // videoView.setMediaController();
+        //videoView.setMediaController(new MediaController(this));
+        videoView.setMediaController(new CustorMediaController(this));
         videoView.setKeepScreenOn(true);
         videoView.requestFocus();
         // 资源准备的监听
