@@ -1,7 +1,6 @@
 package com.feicuiedu.videonews.videoplayer.part;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.Message;
@@ -140,8 +139,7 @@ public class SimpleVideoView extends FrameLayout {
         ImageButton btnFullScreen = (ImageButton) findViewById(R.id.btnFullScreen);
         btnFullScreen.setOnClickListener(new OnClickListener() {
             @Override public void onClick(View v) {
-                Intent intent = new Intent(getContext(), VideoViewActivity.class);
-                getContext().startActivity(intent);
+                VideoViewActivity.open(getContext(), videoPath);
             }
         });
     }
