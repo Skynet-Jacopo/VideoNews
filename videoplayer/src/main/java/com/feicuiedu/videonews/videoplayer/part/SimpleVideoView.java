@@ -196,7 +196,6 @@ public class SimpleVideoView extends FrameLayout {
             //
             ivPreview.setVisibility(View.VISIBLE);
         } catch (IOException e) {
-            // TODO: 2016/9/7 0007 提示develop发生错误!
             Log.d("SimpleVideoView", " prepare MediaPlayer " + e.getMessage());
         }
     }
