@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 case 2:
                     return new LocalVideoFragment();
                 default:
-                    // TODO: 2016/9/9 0009  
+                    // TODO: 2016/9/9 0009
                     throw new RuntimeException("未知");
             }
         }
