@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
 import com.feicuiedu.videonews.R;
+import com.feicuiedu.videonews.ui.likes.LikesFragment;
 import com.feicuiedu.videonews.ui.local.LocalVideoFragment;
+import com.feicuiedu.videonews.ui.news.NewsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,9 +29,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         @Override public Fragment getItem(int position) {
             switch (position){
                 case 0:
+                    return new NewsFragment();
                 case 1:
-                case 2:
                     return new LocalVideoFragment();
+                case 2:
+                    return new LikesFragment();
                 default:
                     // TODO: 2016/9/9 0009
                     throw new RuntimeException("未知");
