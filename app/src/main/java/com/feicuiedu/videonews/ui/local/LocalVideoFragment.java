@@ -54,6 +54,7 @@ public class LocalVideoFragment extends Fragment implements LoaderManager.Loader
 
     @Override public void onDestroy() {
         super.onDestroy();
+        adapter.release();
     }
 
     // loadercallback start ----------------
