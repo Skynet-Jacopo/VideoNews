@@ -78,7 +78,8 @@ public class TestActivity extends AppCompatActivity implements MediaPlayerManage
         this.surface = new Surface(surfaceTexture);
     }
 
-    @Override public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {}
+    @Override public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+    }
 
     @Override public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         this.surface.release();
@@ -87,6 +88,7 @@ public class TestActivity extends AppCompatActivity implements MediaPlayerManage
         return false;
     }
 
-    @Override public void onSurfaceTextureUpdated(SurfaceTexture surface) {}
+    @Override public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+    }
     // SurfaceTextureListener -- end
 }

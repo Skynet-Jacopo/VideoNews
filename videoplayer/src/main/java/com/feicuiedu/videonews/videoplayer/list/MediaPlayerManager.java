@@ -89,6 +89,10 @@ public class MediaPlayerManager {
         });
     }
 
+    public String getVideoId() {
+        return videoId;
+    }
+
     // 释放MediaPlayer
     public void onPause() {
         stopPlayer();
@@ -132,7 +136,7 @@ public class MediaPlayerManager {
             @NonNull String path,
             @NonNull String videoId) {
         // 避免过于频繁操作开和关
-        if (System.currentTimeMillis() - startTime < 300)return;
+        if (System.currentTimeMillis() - startTime < 300) return;
         startTime = System.currentTimeMillis();
         // 当前有其它视频存在
         if (this.videoId != null) {
@@ -158,13 +162,13 @@ public class MediaPlayerManager {
 
     // 停止播放,且更新UI(通过接口callback)
     public void stopPlayer() {
-        if (videoId == null)return;
+        if (videoId == null) return;
         // 通知UI更新
         for (OnPlaybackListener listener : onPlaybackListeners) {
             listener.onStopPlay(videoId);
         }
         this.videoId = null;
-        if(mediaPlayer.isPlaying()){
+        if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
         }
         mediaPlayer.reset();

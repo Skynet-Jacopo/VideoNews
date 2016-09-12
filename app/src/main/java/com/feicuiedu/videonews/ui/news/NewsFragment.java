@@ -8,15 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.feicuiedu.videonews.R;
+import com.feicuiedu.videonews.videoplayer.list.MediaPlayerManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * 视频新闻列表页面
- *
- * 作者：yuanchao on 2016/8/16 0016 16:46
- * 邮箱：yuanchao@feicuiedu.com
  */
 public class NewsFragment extends Fragment {
 
@@ -44,18 +42,24 @@ public class NewsFragment extends Fragment {
 
     @Override public void onResume() {
         super.onResume();
+        // 当Fragment-onResume, MediaPlayer进行初始工作
+        MediaPlayerManager.getsInstance(getContext()).onResume();
     }
 
     @Override public void onPause() {
         super.onPause();
+        // 当Fragment-onPause, MediaPlayer进行释放工作
+        MediaPlayerManager.getsInstance(getContext()).onPause();
     }
 
     @Override public void onDestroyView() {
         super.onDestroyView();
-        ((ViewGroup)view.getParent()).removeView(view);
+        ((ViewGroup) view.getParent()).removeView(view);
     }
 
     @Override public void onDestroy() {
         super.onDestroy();
+        // 当Fragment-onDestroy, 清除所有监听(不再需要UI交互)
+        MediaPlayerManager.getsInstance(getContext()).removeAllListeners();
     }
 }
